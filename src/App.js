@@ -22,16 +22,13 @@ export default function App() {
 
   async function handleLikeRepository(id) {
 
-    const repositoryIndex = repositories.findIndex(repository => repository.id === id);
+      const { data: likedRepository } = await api.post(`/repositories/${id}/like`);
 
-    if (repositoryIndex > -1) {
-      const { data } = await api.post(`/repositories/${id}/like`);
+      const updatedRepositories = repositories.map(repository => {
+        return (repository.id === id) ? likedRepository : repository
+      });
 
-      let repositoriesList = [...repositories];
-      repositoriesList[repositoryIndex].likes = data.likes;
-
-      setRepositories(repositoriesList);
-    }    
+      setRepositories(updatedRepositories);
   }
 
   return (
@@ -61,7 +58,7 @@ export default function App() {
                   style={styles.likeText}
                   testID={`repository-likes-${repository.id}`}
                 >
-                  {repository.likes} {repository.likes === 1 ? "curtida" : "curtidas"}
+                  {repository.likes} curtida{repository.likes === 1 ? "" : "s"}
                 </Text>
               </View>
 
